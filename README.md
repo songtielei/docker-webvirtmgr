@@ -46,3 +46,15 @@ ResultAny=yes
 ResultInactive=yes
 ResultActive=yes
 ```
+
+免密码登陆
+
+### on system where WebVirtMgr is installed
+
+```
+sudo su - webvirtmgr -s /bin/bash
+ssh-keygen
+touch ~/.ssh/config && echo -e "StrictHostKeyChecking=no\nUserKnownHostsFile=/dev/null" >> ~/.ssh/config
+chmod 0600 ~/.ssh/config
+ssh-copy-id service@qemu-kvm-libvirt-host
+```

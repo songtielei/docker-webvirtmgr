@@ -18,13 +18,13 @@ ADD gunicorn.conf.py /webvirtmgr/conf/gunicorn.conf.py
 
 ADD bootstrap.sh /webvirtmgr/bootstrap.sh
 
-RUN useradd webvirtmgr -g libvirtd -u 1010 -d /data/vm/ -s /sbin/nologin
+RUN useradd webvirtmgr -g libvirtd -u 1010 -d /data/webvirtmgr/ -s /sbin/nologin
 RUN chown webvirtmgr:libvirtd -R /webvirtmgr
 
 RUN apt-get -ys clean
 
 WORKDIR /
-VOLUME /data/vm
+VOLUME /data/webvirtmgr
 
 EXPOSE 8080
 EXPOSE 6080

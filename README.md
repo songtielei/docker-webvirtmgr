@@ -8,14 +8,14 @@
 ```
 $ docker pull primiano/docker-webvirtmgr
 $ sudo groupadd -g 1010 webvirtmgr
-$ sudo useradd -u 1010 -g webvirtmgr -s /sbin/nologin -d /data/vm webvirtmgr
-$ sudo chown -R webvirtmgr:webvirtmgr /data/vm
+$ sudo useradd -u 1010 -g webvirtmgr -s /sbin/nologin -d /data/webvirtmgr webvirtmgr
+$ sudo chown -R webvirtmgr:webvirtmgr /data/webvirtmgr
 ```
 
 ### Usage
 
 ```
-$ docker run -d -p 8080:8080 -p 6080:6080 --name webvirtmgr -v /data/vm:/data/vm primiano/docker-webvirtmgr
+$ docker run -d -p 8080:8080 -p 6080:6080 --name webvirtmgr -v /data/webvirtmgr:/data/webvirtmgr primiano/docker-webvirtmgr
 ```
 
 ### libvirtd configuration on the host

@@ -6,44 +6,43 @@
 2. Pull the image from Docker Hub
 
 ```
-$ docker pull primiano/docker-webvirtmgr
-$ sudo groupadd -g 1010 webvirtmgr
-$ sudo useradd -u 1010 -g webvirtmgr -s /sbin/nologin -d /data/webvirtmgr webvirtmgr
-$ sudo chown -R webvirtmgr:webvirtmgr /data/webvirtmgr
+$ docker build -t harbor.ui-tech.cn/webvirtmgr:4.8.9 .
+$ docker push harbor.ui-tech.cn/webvirtmgr:4.8.9
+$ docker pull harbor.ui-tech.cn/webvirtmgr:4.8.9
 ```
 
 ### Usage
 
 ```
-$ docker run -d -p 8080:8080 -p 6080:6080 --name webvirtmgr -v /data/webvirtmgr:/data/webvirtmgr primiano/docker-webvirtmgr
+$ docker run -d -p 8080:8080 -p 6080:6080 --name webvirtmgr -v /data/webvirtmgr:/data/webvirtmgr harbor.ui-tech.cn/webvirtmgr:4.8.9
 ```
 
 ### libvirtd configuration on the host
 
-```
-$ cat /etc/default/libvirt-bin
-start_libvirtd="yes"
-libvirtd_opts="-d -l"
-```
+Centos7
 
 ```
-$ cat /etc/libvirt/libvirtd.conf
-listen_tls = 0
-listen_tcp = 1
-listen_addr = "172.17.42.1"  ## Address of docker0 veth on the host
-unix_sock_group = "libvirtd"
-unix_sock_ro_perms = "0777"
-unix_sock_rw_perms = "0770"
-auth_unix_ro = "none"
-auth_unix_rw = "none"
-auth_tcp = "none"
-auth_tls = "none"
-```
+sudo yum -y install qemu-kvm libvirt bridge-utils
 
-```
-$ cat /etc/libvirt/qemu.conf
-# This is obsolete. Listen addr specified in VM xml.
-# vnc_listen = "0.0.0.0"
-vnc_tls = 0
-# vnc_password = ""
+sudo sed -i 's/#LIBVIRTD_ARGS/LIBVIRTD_ARGS/g' /etc/sysconfig/libvirtd
+sudo sed -i 's/#listen_tls/listen_tls/g' /etc/libvirt/libvirtd.conf
+sudo sed -i 's/#listen_tcp/listen_tcp/g' /etc/libvirt/libvirtd.conf
+sudo sed -i 's/#auth_tcp/auth_tcp/g' /etc/libvirt/libvirtd.conf
+sudo sed -i 's/#vnc_listen/vnc_listen/g' /etc/libvirt/qemu.conf
+
+sudo systemctl stop libvirtd.service > /dev/null 2>&1
+sudo systemctl start libvirtd.service
+sudo systemctl stop libvirt-guests.service > /dev/null 2>&1
+sudo systemctl start libvirt-guests.service
+
+sudo usermod -G libvirtd -a service
+
+sudo chown service:service /etc/polkit-1/localauthority/50-local.d/50-libvirt-remote-access.pkla
+sudo vim /etc/polkit-1/localauthority/50-local.d/50-libvirt-remote-access.pkla
+[Remote libvirt SSH access]
+Identity=unix-user:service
+Action=org.libvirt.unix.manage
+ResultAny=yes
+ResultInactive=yes
+ResultActive=yes
 ```

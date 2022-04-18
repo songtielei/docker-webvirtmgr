@@ -1,6 +1,8 @@
 FROM ubuntu:18.04
 MAINTAINER Primiano Tucci <p.tucci@gmail.com>
 
+ENV DEBIAN_FRONTEND noninteractive
+
 RUN sed -i 's/archive.ubuntu.com/mirrors.aliyun.com/g' /etc/apt/sources.list \
     && sed -i 's/security.ubuntu.com/mirrors.aliyun.com/g'  /etc/apt/sources.list \
     && apt-get -y update \
@@ -19,6 +21,7 @@ ADD supervisor.webvirtmgr.conf /etc/supervisor/conf.d/webvirtmgr.conf
 ADD gunicorn.conf.py /webvirtmgr/conf/gunicorn.conf.py
 ADD bootstrap.sh /webvirtmgr/bootstrap.sh
 
+RUN groupadd -g 1010 libvirtd
 RUN useradd webvirtmgr -g libvirtd -u 1010 -d /data/webvirtmgr/ -s /sbin/nologin
 RUN chown webvirtmgr:libvirtd -R /webvirtmgr
 

@@ -1,3 +1,4 @@
+https://github.com/primiano/docker-webvirtmgr
 
 ## Webvirtmgr Dockerfile
 
@@ -9,12 +10,16 @@
 $ docker build -t harbor.ui-tech.cn/webvirtmgr:4.8.9 .
 $ docker push harbor.ui-tech.cn/webvirtmgr:4.8.9
 $ docker pull harbor.ui-tech.cn/webvirtmgr:4.8.9
+
+$ sudo groupadd -g 1010 webvirtmgr
+$ sudo useradd -u 1010 -g webvirtmgr -s /sbin/nologin -d /data/vm webvirtmgr
+$ sudo chown -R webvirtmgr:webvirtmgr /data/vm
 ```
 
 ### Usage
 
 ```
-$ docker run -d -p 8080:8080 -p 6080:6080 --name webvirtmgr -v /data/webvirtmgr:/data/webvirtmgr harbor.ui-tech.cn/webvirtmgr:4.8.9
+$ docker run -d -p 18080:8080 -p 6080:6080 --name webvirtmgr -v /data/vm:/data/vm harbor.ui-tech.cn/webvirtmgr:4.8.9
 ```
 
 ### libvirtd configuration on the host
